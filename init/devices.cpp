@@ -835,7 +835,13 @@ static void handle_device_event(struct uevent *uevent)
 
 static int load_firmware(int fw_fd, gzFile gz_fd, int loading_fd, int data_fd)
 {
+    struct stat st;
+    long len_to_copy;
     int ret = 0;
+
+    if(fstat(fw_fd, &st) < 0)
+        return -1;
+    len_to_copy = st.st_size;
 
     if (S_ISBLK(st.st_mode)) {
         //File points to a block device. Need to calculate it's size
